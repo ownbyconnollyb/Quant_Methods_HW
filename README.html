@@ -354,62 +354,116 @@ display: none;
 
 <div id="quant_methods_hw" class="section level1">
 <h1>Quant_Methods_HW</h1>
-<p>#’ — #’ title: HW2 #’ author: Briar Ownby-Connolly #’ date: ’
+<p>#’ — #’ title: HW3 #’ author: Briar Ownby-Connolly #’ date: ’
 <code>r paste(&quot;created on&quot;, Sys.Date())</code>’ #’ output: html_document
 #’ — #’</p>
-<p>data(iris) head(iris) sp_ids &lt;- unique(iris$Speices) output &lt;-
-matrix(0, nrow=length(sp_ids), ncol=ncol(iris)-1)
-rownames(trait_average) &lt;- sp_ids colnames(trait_average) &lt;-
-names(iris[ , -ncol(iris)])</p>
-<p>for(i in seq_along(sp_ids)) { iris_sp &lt;- subset(iris,
-subset=Species == sp_ids[i], select=-Species) # loop through traits
-for(j in 1:(ncol(iris_sp))) { x &lt;- 0 y &lt;- 0 # ’loop through rows
-for values greater than 0<br />
-if (nrow(iris_sp) &gt; 0) { #’loop through rows,x is running through
-traits, y is running down the rows for(k in 1:nrow(iris_sp)) { x &lt;- x
-+ iris_sp[k, j] y &lt;- y + 1 } #’generating averages of traits
-output[i, j] &lt;- x / y } } } output</p>
 </div>
-<div id="describe-the-values-stores-in-object-output.-in-other-words-what-did-the-loop-create" class="section level1">
-<h1>1) Describe the values stores in object output. In other words what
-did the loop create?</h1>
-<p>the output is creating a two-dimensional array of the list of the
-unique species in the iris data. The loop generated trait average. # 2)
-Describe using pseudo-code how output was calculated.</p>
-</div>
-<div id="the-variables-in-the-loop-were-named-so-as-to-be-vague.-how-can-the-objects-output-x-and-y-be-renamed-such-that-it-is-clearer-what-is-occurring-in-the-loop." class="section level1">
-<h1>3)The variables in the loop were named so as to be vague. How can
-the objects output, x, and y be renamed such that it is clearer what is
-occurring in the loop.</h1>
-<p>output = trait average x = trait_sum y = sample_size</p>
-</div>
-<div id="it-is-possible-to-accomplish-the-same-task-using-fewer-lines-of-code-please-suggest-one-other-way-to-calculate-output-that-decreases-the-number-of-loops-by-1." class="section level1">
-<h1>4)It is possible to accomplish the same task using fewer lines of
-code? Please suggest one other way to calculate output that decreases
-the number of loops by 1.</h1>
-<p>for(i in seq_along(sp_ids)) { iris_sp &lt;- subset(iris,
-subset=Species == sp_ids[i], select=-Species) # loop through traits
-for(j in 1:(ncol(iris_sp))) { for(k in 1:nrow(iris_sp)) {
-trait_average[i, j] &lt;- mean(iris_sp[ , j]) } } }</p>
-<p>trait_average</p>
-<p>#‘Sum of a Sequence’</p>
-<p>#5) You have a vector x with the numbers 1:10. Write a for loop that
-will produce a vector y that contains the sum of x up to that index of
-x. So for example the elements of x are 1, 2, 3, and so on and the
-elements of y would be 1, 3, 6, and so on.</p>
-<p>x &lt;- 1:10 y &lt;- cumsum(x) for(i in 1:10) { y &lt;- cumsum(1:10)
-} y</p>
-<p>#6) Modify your for loop so that if the sum is greater than 10 the
-value of y is set to NA</p>
-<p>x &lt;- 1:10 y &lt;- cumsum(1:10) y &lt;- ifelse(y &gt; 10, NA,
-y)</p>
-<p>for(i in 1:10) { y &lt;- cumsum(1:10) if(cumsum(1:10) &gt; 10) {
-print(‘NA’) } }</p>
-</div>
-<div id="place-your-for-loop-into-a-function-that-accepts-as-its-argument-any-vector-of-arbitrary-length-and-it-will-return-y." class="section level1">
-<h1>7) Place your for loop into a function that accepts as its argument
-any vector of arbitrary length and it will return y.</h1>
-<p>func1 &lt;- function(y){ y + seq_along(y) }</p>
+<div id="quant_methods_hw-1" class="section level1">
+<h1>Quant_Methods_HW</h1>
+<p>#’ — #’ title: HW3 #’ author: Briar Ownby-Connolly #’ date: ’
+<code>r paste(&quot;created on&quot;, Sys.Date())</code>’ #’ output: html_document
+#’ — #’</p>
+<p>trees &lt;- read.csv(‘<a href="https://raw.githubusercontent.com/dmcglinn/quant_methods/gh-pages/data/treedata_subset.csv" class="uri">https://raw.githubusercontent.com/dmcglinn/quant_methods/gh-pages/data/treedata_subset.csv</a>’)
+trees library(car)</p>
+<p>sp_cov = with(trees, tapply(cover, list(plotID, spcode), function(x)
+round(mean(x)))) sp_cov = ifelse(is.na(sp_cov), 0, sp_cov) sp_cov =
+data.frame(plotID = row.names(sp_cov), sp_cov)</p>
+<p>cols_to_select = c(‘elev’, ‘tci’, ‘streamdist’, ‘disturb’, ‘beers’)
+env = aggregate(trees[ , cols_to_select], by = list(trees$plotID),
+function(x) x[1]) names(env) [1] = ‘plotID’</p>
+<p>site_data = merge(sp_cov, env, by=‘plotID’) abies = site_data[ ,
+c(‘ABIEFRA’, cols_to_select)] acer = site_data[ , c(‘ACERRUB’,
+cols_to_select)]</p>
+<p>names(abies)[1] = ‘cover’ names(acer) [1] = ‘cover’</p>
+<p>#’ ABIES</p>
+<p>pairs(~ cover + elev + tci + streamdist + beers, data = abies)
+pairs(~ cover + elev + tci + streamdist + beers, data = abies,
+upper.panel = panel.smooth, lower.panel = panel.cor)</p>
+<p>plot(~ elev + cover, data = abies) plot(~ tci + cover, data =
+abies)</p>
+<p>main_effect_elev &lt;- lm(cover ~ elev, data = abies)</p>
+<p>par(mfrow=c(1, 2)) plot(~ elev + cover, data = abies)
+abline(main_effect_elev)</p>
+<p>main_effect_tci &lt;- lm(cover ~ tci, data = abies)</p>
+<p>plot(~ tci + cover, data = abies) par(mfrow=c(1, 2))
+abline(main_effect_tci)</p>
+<p>int_eff_ET &lt;- lm(cover ~ elev + tci + elev:tci, data = abies)
+int_eff_ET</p>
+<p>plot(int_eff_ET)</p>
+<p>summary(main_effect_elev) anova(main_effect_elev)</p>
+<p>summary(main_effect_tci) anova(main_effect_tci)</p>
+<p>summary(int_eff_ET) anova(int_eff_ET)</p>
+<p>anova(main_effect_elev, main_effect_tci, int_eff_ET)</p>
+<p>Anova(update(int_eff_ET, . ~ . -1), type = 3)</p>
+<p>abies_poi = glm(cover ~ tci + elev + streamdist + beers , data =
+abies, family = ‘poisson’) abies_poi</p>
+<p>pseudo_r2 = function(abies_poi) { 1 - abies_poi<span class="math inline">\(deviance / abies_poi\)</span>null.deviance }</p>
+<p>with(summary(abies_poi), 1 - deviance/null.deviance)</p>
+<p>xrange = c(1500, 2000) plot(main_effect_elev, data = abies)
+lines(xrange, predict(main_effect_elev, newdata = data.frame(elev =
+xrange)))</p>
+<p>#’ ACER</p>
+<p>pairs(~ cover + elev + tci + streamdist + beers, data = acer) pairs(~
+cover + elev + tci + streamdist + beers, data = acer, upper.panel =
+panel.smooth, lower.panel = panel.cor)</p>
+<p>plot(~ elev + cover, data = acer) plot(~ tci + cover, data =
+acer)</p>
+<p>main_effect_elev2 &lt;- lm(cover ~ elev, data = acer)</p>
+<p>par(mfrow=c(1, 2)) plot(~ elev + cover, data = acer)
+abline(main_effect_elev2)</p>
+<p>main_effect_tci2 &lt;- lm(cover ~ tci, data = acer)</p>
+<p>plot(~ tci + cover, data = acer) par(mfrow=c(1, 2))
+abline(main_effect_tci2)</p>
+<p>int_eff_ET2 &lt;- lm(cover ~ elev + tci + elev:tci, data = acer)
+int_eff_ET2</p>
+<p>plot(int_eff_ET2)</p>
+<p>summary(main_effect_elev2) anova(main_effect_elev2)</p>
+<p>summary(main_effect_tci2) anova(main_effect_tci2)</p>
+<p>summary(int_eff_ET2) anova(int_eff_ET2)</p>
+<p>anova(main_effect_elev2, main_effect_tci2, int_eff_ET2)</p>
+<p>Anova(update(int_eff_ET2, . ~ . -1), type = 3)</p>
+<p>acer_poi = glm(cover ~ tci + elev + streamdist + beers , data = acer,
+family = ‘poisson’) acer_poi</p>
+<p>pseudo_r2 = function(acer_poi) { 1 - acer_poi<span class="math inline">\(deviance / acer_poi\)</span>null.deviance }</p>
+<p>with(summary(acer_poi), 1 - deviance/null.deviance)</p>
+<p>xrange = c(1500, 2000) plot(main_effect_elev2, data = acer)
+lines(xrange, predict(main_effect_elev2, newdata = data.frame(elev =
+xrange)))</p>
+<p>#’ 1a. How well does the exploratory model appear to explain cover?
+In Abies, the exploratory model gives a decent overview of the
+explanatory variables in relation to cover, where elevation and tci seem
+to be interesting ones to explor further with models. Due to acer being
+a generalist speices, the exploratory models use in explaining cover
+just supports to notion of prevelance seen with this typs of
+speices.</p>
+<p>#’ 2a. Which explanatory variables are the most important? For the
+speices abies, the explanatory variables elevatin and tci seem to be
+most important. For comparison, elevation and tci are also important for
+acer.</p>
+<p>#’ 3a. Do model diagnostics indicate any problems with violations of
+OLS assumptions? Yes, the diagonstics indicate problems with violations
+of the three OLS assumptions.</p>
+<p>#’ 4a. Are you able to explain variance in one species better than
+another, why might this be the case? Variance can be explained better in
+abies as opposed to acer, this might be due to the different behaviors
+of these species, with abies being a habitat specialist and acer being a
+habitat generalist.</p>
+<p>#’ 2. Compare your qualitative assessment of which variables were
+most important in each model. Does it appear that changing the error
+distribution changed the results much? In what ways? chaning the error
+distribution changed the results slightly. The pseudo code resulted in
+explaining significantly more variance for abies, while explained
+variance in acer was not as large. Adjusted r2 values also reflected
+this.</p>
+<p>#’ 3. Provide a plain English summary (i.e., no statistics) of what
+you have found and what conclusions we can take away from your analysis?
+The interaction effect model seems to explain more of the variation
+within the species abies and acer for comparision. Elevation and tci
+were the explanatory variables looked at in reference to species cover,
+providing insight into the different behaviors of species generalist and
+specialist, where more variance was found to be explianed with our
+specialist species as opposed to generalist species, through our
+models.</p>
 </div>
 
 

@@ -7,7 +7,7 @@
 #' output: html_document
 #' ---
 #' 
- 
+
 
 trees <- read.csv('https://raw.githubusercontent.com/dmcglinn/quant_methods/gh-pages/data/treedata_subset.csv')
 trees
@@ -113,7 +113,7 @@ par(mfrow=c(1, 2))
 abline(main_effect_tci2)
 
 int_eff_ET2 <- lm(cover ~ elev + tci + elev:tci,
-                 data = acer)
+                  data = acer)
 int_eff_ET2
 
 plot(int_eff_ET2)
@@ -133,11 +133,11 @@ Anova(update(int_eff_ET2, . ~ . -1), type = 3)
 
 
 acer_poi = glm(cover ~ tci + elev + streamdist + beers , data = acer,
-                family = 'poisson')
+               family = 'poisson')
 acer_poi
 
 pseudo_r2 = function(acer_poi) {
-                1 - acer_poi$deviance / acer_poi$null.deviance
+  1 - acer_poi$deviance / acer_poi$null.deviance
 }
 
 
@@ -146,7 +146,7 @@ with(summary(acer_poi), 1 - deviance/null.deviance)
 
 xrange = c(1500, 2000)
 plot(main_effect_elev2, data = acer)
-     lines(xrange,
+lines(xrange,
       predict(main_effect_elev2,
               newdata = data.frame(elev = xrange)))
 
@@ -170,7 +170,7 @@ these species, with abies being a habitat specialist and acer being a habitat ge
 
 #' 2. Compare your qualitative assessment of which variables were most important in each model. 
 Does it appear that changing the error distribution changed the results much? In what ways?
-chaning the error distribution changed the results slightly. The pseudo code resulted in explaining significantly more variance for abies, 
+  chaning the error distribution changed the results slightly. The pseudo code resulted in explaining significantly more variance for abies, 
 while explained variance in acer was not as large. Adjusted r2 values also reflected this.
 
 
@@ -178,4 +178,3 @@ while explained variance in acer was not as large. Adjusted r2 values also refle
 The interaction effect model seems to explain more of the variation within the species abies and acer for comparision. Elevation and tci were the explanatory 
 variables looked at in reference to species cover, providing insight into the different behaviors of species generalist and specialist, where more variance was
 found to be explianed with our specialist species as opposed to generalist species, through our models. 
-

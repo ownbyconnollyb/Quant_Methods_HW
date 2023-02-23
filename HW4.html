@@ -11,7 +11,7 @@
 
 
 
-<title>README</title>
+<title>HW4.knit</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -354,116 +354,62 @@ display: none;
 
 <div id="quant_methods_hw" class="section level1">
 <h1>Quant_Methods_HW</h1>
-<p>#’ — #’ title: HW3 #’ author: Briar Ownby-Connolly #’ date: ’
-<code>r paste(&quot;created on&quot;, Sys.Date())</code>’ #’ output: html_document
-#’ — #’</p>
-</div>
-<div id="quant_methods_hw-1" class="section level1">
-<h1>Quant_Methods_HW</h1>
-<p>#’ — #’ title: HW3 #’ author: Briar Ownby-Connolly #’ date: ’
-<code>r paste(&quot;created on&quot;, Sys.Date())</code>’ #’ output: html_document
-#’ — #’</p>
-<p>trees &lt;- read.csv(‘<a href="https://raw.githubusercontent.com/dmcglinn/quant_methods/gh-pages/data/treedata_subset.csv" class="uri">https://raw.githubusercontent.com/dmcglinn/quant_methods/gh-pages/data/treedata_subset.csv</a>’)
-trees library(car)</p>
-<p>sp_cov = with(trees, tapply(cover, list(plotID, spcode), function(x)
-round(mean(x)))) sp_cov = ifelse(is.na(sp_cov), 0, sp_cov) sp_cov =
-data.frame(plotID = row.names(sp_cov), sp_cov)</p>
-<p>cols_to_select = c(‘elev’, ‘tci’, ‘streamdist’, ‘disturb’, ‘beers’)
-env = aggregate(trees[ , cols_to_select], by = list(trees$plotID),
-function(x) x[1]) names(env) [1] = ‘plotID’</p>
-<p>site_data = merge(sp_cov, env, by=‘plotID’) abies = site_data[ ,
-c(‘ABIEFRA’, cols_to_select)] acer = site_data[ , c(‘ACERRUB’,
-cols_to_select)]</p>
-<p>names(abies)[1] = ‘cover’ names(acer) [1] = ‘cover’</p>
-<p>#’ ABIES</p>
-<p>pairs(~ cover + elev + tci + streamdist + beers, data = abies)
-pairs(~ cover + elev + tci + streamdist + beers, data = abies,
-upper.panel = panel.smooth, lower.panel = panel.cor)</p>
-<p>plot(~ elev + cover, data = abies) plot(~ tci + cover, data =
-abies)</p>
-<p>main_effect_elev &lt;- lm(cover ~ elev, data = abies)</p>
-<p>par(mfrow=c(1, 2)) plot(~ elev + cover, data = abies)
-abline(main_effect_elev)</p>
-<p>main_effect_tci &lt;- lm(cover ~ tci, data = abies)</p>
-<p>plot(~ tci + cover, data = abies) par(mfrow=c(1, 2))
-abline(main_effect_tci)</p>
-<p>int_eff_ET &lt;- lm(cover ~ elev + tci + elev:tci, data = abies)
-int_eff_ET</p>
-<p>plot(int_eff_ET)</p>
-<p>summary(main_effect_elev) anova(main_effect_elev)</p>
-<p>summary(main_effect_tci) anova(main_effect_tci)</p>
-<p>summary(int_eff_ET) anova(int_eff_ET)</p>
-<p>anova(main_effect_elev, main_effect_tci, int_eff_ET)</p>
-<p>Anova(update(int_eff_ET, . ~ . -1), type = 3)</p>
-<p>abies_poi = glm(cover ~ tci + elev + streamdist + beers , data =
-abies, family = ‘poisson’) abies_poi</p>
-<p>pseudo_r2 = function(abies_poi) { 1 - abies_poi<span class="math inline">\(deviance / abies_poi\)</span>null.deviance }</p>
-<p>with(summary(abies_poi), 1 - deviance/null.deviance)</p>
-<p>xrange = c(1500, 2000) plot(main_effect_elev, data = abies)
-lines(xrange, predict(main_effect_elev, newdata = data.frame(elev =
-xrange)))</p>
-<p>#’ ACER</p>
-<p>pairs(~ cover + elev + tci + streamdist + beers, data = acer) pairs(~
-cover + elev + tci + streamdist + beers, data = acer, upper.panel =
-panel.smooth, lower.panel = panel.cor)</p>
-<p>plot(~ elev + cover, data = acer) plot(~ tci + cover, data =
-acer)</p>
-<p>main_effect_elev2 &lt;- lm(cover ~ elev, data = acer)</p>
-<p>par(mfrow=c(1, 2)) plot(~ elev + cover, data = acer)
-abline(main_effect_elev2)</p>
-<p>main_effect_tci2 &lt;- lm(cover ~ tci, data = acer)</p>
-<p>plot(~ tci + cover, data = acer) par(mfrow=c(1, 2))
-abline(main_effect_tci2)</p>
-<p>int_eff_ET2 &lt;- lm(cover ~ elev + tci + elev:tci, data = acer)
-int_eff_ET2</p>
-<p>plot(int_eff_ET2)</p>
-<p>summary(main_effect_elev2) anova(main_effect_elev2)</p>
-<p>summary(main_effect_tci2) anova(main_effect_tci2)</p>
-<p>summary(int_eff_ET2) anova(int_eff_ET2)</p>
-<p>anova(main_effect_elev2, main_effect_tci2, int_eff_ET2)</p>
-<p>Anova(update(int_eff_ET2, . ~ . -1), type = 3)</p>
-<p>acer_poi = glm(cover ~ tci + elev + streamdist + beers , data = acer,
-family = ‘poisson’) acer_poi</p>
-<p>pseudo_r2 = function(acer_poi) { 1 - acer_poi<span class="math inline">\(deviance / acer_poi\)</span>null.deviance }</p>
-<p>with(summary(acer_poi), 1 - deviance/null.deviance)</p>
-<p>xrange = c(1500, 2000) plot(main_effect_elev2, data = acer)
-lines(xrange, predict(main_effect_elev2, newdata = data.frame(elev =
-xrange)))</p>
-<p>#’ 1a. How well does the exploratory model appear to explain cover?
-In Abies, the exploratory model gives a decent overview of the
-explanatory variables in relation to cover, where elevation and tci seem
-to be interesting ones to explor further with models. Due to acer being
-a generalist speices, the exploratory models use in explaining cover
-just supports to notion of prevelance seen with this typs of
-speices.</p>
-<p>#’ 2a. Which explanatory variables are the most important? For the
-speices abies, the explanatory variables elevatin and tci seem to be
-most important. For comparison, elevation and tci are also important for
-acer.</p>
-<p>#’ 3a. Do model diagnostics indicate any problems with violations of
-OLS assumptions? Yes, the diagonstics indicate problems with violations
-of the three OLS assumptions.</p>
-<p>#’ 4a. Are you able to explain variance in one species better than
-another, why might this be the case? Variance can be explained better in
-abies as opposed to acer, this might be due to the different behaviors
-of these species, with abies being a habitat specialist and acer being a
-habitat generalist.</p>
-<p>#’ 2. Compare your qualitative assessment of which variables were
-most important in each model. Does it appear that changing the error
-distribution changed the results much? In what ways? chaning the error
-distribution changed the results slightly. The pseudo code resulted in
-explaining significantly more variance for abies, while explained
-variance in acer was not as large. Adjusted r2 values also reflected
-this.</p>
-<p>#’ 3. Provide a plain English summary (i.e., no statistics) of what
-you have found and what conclusions we can take away from your analysis?
-The interaction effect model seems to explain more of the variation
-within the species abies and acer for comparision. Elevation and tci
-were the explanatory variables looked at in reference to species cover,
-providing insight into the different behaviors of species generalist and
-specialist, where more variance was found to be explianed with our
-specialist species as opposed to generalist species, through our
-models.</p>
+<p>#’ — #’ title: HW4 #’ author: Briar Ownby-Connolly #’ date: ’ created
+on 2023-02-21’ #’ output: html_document #’ — #’</p>
+<p>library(vegan) data(dune) data(dune.env) ?dune ?dune.env</p>
+<p>library(dummies)</p>
+<p>head(dune) head(dune.env)</p>
+<p>pairs(~ A1 + Moisture + Management + Use + Manure, data =
+dune.env)</p>
+<ol style="list-style-type: decimal">
+<li>Conduct an indirect ordination on the dune plant community.
+Specifically, visually examine a NMDS plot using the bray-curtis
+distance metric. Below is some code to help you develop a potential plot
+that emphasizes the role of the environmental variable “Moisture”.
+Describe how you interpret the graphic. What is the goal of creating
+such a plot? Does this analysis suggest any interesting findings with
+respect to the dune vegetation?</li>
+</ol>
+<p>dune_pca &lt;- rda(dune) dune_pca plot(dune_pca)
+bioplot(dune_pca)</p>
+<p>dune_mds &lt;- metaMDS(dune)</p>
+<p>plot(dune_mds, type = ‘n’) text(dune_mds, ‘sp’, cex = .5) #generate
+vector of colors color_vect = rev(terrain.colors(6))[-1]
+points(dune_mds, ‘sites’, pch=19, col=color_vect[dune.env&amp;Moisture])
+legend(‘topright’, paste(“Moisture =”, 1:5, sep=’’), col=color_vect,
+pch=19)</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Carry out a direct ordination using CCA in order to test any
+potential hypotheses that you developed after examining the MDS plot.
+Specifically, carry out a test of the entire model (i.e., including all
+constrained axes) and also carry out tests at the scale of individual
+explanatory variables you included in your model if you included more
+than one variable. Plot your results.</li>
+</ol>
+<p>dune_cca &lt;- cca(dune ~ ., data= dune.env)</p>
+<p>anova(dune_cca)</p>
+<p>dune_rda &lt;- rda(dune ~ ., data = dune.env)</p>
+<p>dune_rda plot(dune_rda) RsquareAdj(dune_rda)</p>
+<p>plot(dune_cca) RsquareA(dune_cca)</p>
+<p>anova(dune_cca, by=‘margin’, permutations = 999)</p>
+<p>anova(dune_cca_less, dune_cca)</p>
+<p>dune_cca_M &lt;- cca(dune ~ dune.env$Moisture) RsquareAdj(dune_cca_M)
+anova(dune_cca_M, permutations = 999) plot(dune_cca_M, display = ‘sp’,
+scaling = 1) orditorp(dune_cca_M, display = ‘sp’, cex = 0.5, scaling =
+1, col = ‘blue’) text(dune_cca_M, display=‘bp’, col=‘red’)</p>
+<p>dune_cca_Ma &lt;- cca(dune ~ dune.env$Management)
+RsquareAdj(dune_cca_Ma) anova(dune_cca_Ma, permutations = 999)
+plot(dune_cca_Ma,display = ‘sp’, scaling = 1)
+orditorp(dune_cca_Ma,display = ‘sp’, cex = 0.5, scaling = 1, col =
+‘blue’) text(dune_cca_Ma,display=‘bp’, col=‘red’)</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Do your two analyses agree with one another or complement one
+another or do these two analyses seem to be suggesting different take
+home messages? Which analysis do you find to be more useful?</li>
+</ol>
+<p>The2 analyses seem to agree with each other, but I find the results
+to be more easily conveyed (visually) when looking at CAA. Compared to
+NMDS, it really emphasizes the lenght of the arrow for moisture 1.</p>
 </div>
 
 

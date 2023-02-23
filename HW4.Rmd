@@ -1,0 +1,107 @@
+# Quant_Methods_HW
+
+#' ---
+#' title: HW4
+#' author: Briar Ownby-Connolly
+#' date: ' `r paste("created on", Sys.Date())`'
+#' output: html_document
+#' ---
+#' 
+
+
+library(vegan)
+data(dune)
+data(dune.env)
+?dune
+?dune.env
+
+library(dummies)
+
+head(dune)
+head(dune.env)
+
+
+pairs(~ A1 + Moisture + Management + Use + Manure, data = dune.env)
+
+
+
+1. Conduct an indirect ordination on the dune plant community. Specifically,
+visually examine a NMDS plot using the bray-curtis distance metric. Below is 
+some code to help you develop a potential plot that emphasizes the role of the
+environmental variable “Moisture”. Describe how you interpret the graphic.
+What is the goal of creating such a plot? Does this analysis suggest any
+interesting findings with respect to the dune vegetation?
+
+
+dune_pca <- rda(dune)
+dune_pca
+plot(dune_pca)
+bioplot(dune_pca)
+
+dune_mds <- metaMDS(dune)
+  
+plot(dune_mds, type = 'n')
+text(dune_mds, 'sp', cex = .5)
+#generate vector of colors
+color_vect = rev(terrain.colors(6))[-1]
+points(dune_mds, 'sites', pch=19,
+       col=color_vect[dune.env&Moisture])
+legend('topright', paste("Moisture =", 1:5, sep=''),
+       col=color_vect, pch=19)
+                
+
+
+2. Carry out a direct ordination using CCA in order to test any potential 
+hypotheses that you developed after examining the MDS plot. Specifically, 
+carry out a test of the entire model (i.e., including all constrained axes) 
+and also carry out tests at the scale of individual explanatory variables
+you included in your model if you included more than one variable. Plot your
+results.
+
+
+
+dune_cca <- cca(dune ~ ., data= dune.env)
+
+anova(dune_cca)
+
+dune_rda <- rda(dune ~ ., data = dune.env)
+
+dune_rda
+plot(dune_rda)
+RsquareAdj(dune_rda)
+
+
+
+plot(dune_cca)
+RsquareA(dune_cca)
+
+anova(dune_cca, by='margin', permutations = 999)
+
+anova(dune_cca_less, dune_cca)
+
+
+dune_cca_M <- cca(dune ~ dune.env$Moisture)
+RsquareAdj(dune_cca_M)
+anova(dune_cca_M, permutations = 999)
+plot(dune_cca_M, display = 'sp', scaling = 1)
+orditorp(dune_cca_M, display = 'sp', cex = 0.5, scaling = 1, col = 'blue')
+text(dune_cca_M, display='bp', col='red')
+
+
+dune_cca_Ma <- cca(dune ~ dune.env$Management)
+RsquareAdj(dune_cca_Ma)
+anova(dune_cca_Ma, permutations = 999)
+plot(dune_cca_Ma,display = 'sp', scaling = 1)
+orditorp(dune_cca_Ma,display = 'sp', cex = 0.5, scaling = 1, col = 'blue')
+text(dune_cca_Ma,display='bp', col='red')
+
+
+
+
+3. Do your two analyses agree with one another or complement one another or 
+do these two analyses seem to be suggesting different take home messages?
+Which analysis do you find to be more useful?
+  
+The2 analyses seem to agree with each other, but I find the results to be more
+easily conveyed (visually) when looking at CAA. Compared to NMDS, it really emphasizes
+the lenght of the arrow for moisture 1. 

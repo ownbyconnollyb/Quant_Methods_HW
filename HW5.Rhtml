@@ -1,0 +1,131 @@
+# Quant_Methods_HW
+
+#' ---
+#' title: HW5
+#' author: Briar Ownby-Connolly
+#' date: ' `r paste("created on", Sys.Date())`'
+#' output: html_document
+#' ---
+#' 
+
+
+## UTM Coordinates (in meters)
+
+BCI_xy = data.frame(x = rep(seq(625754, 625754, by=100), each=5),
+                    y = rep(seq(1011569, 1011969, by=100), len=50))
+
+BCI_xy
+
+
+1. Examine if there is evidence of spatial dependence in a rare and 
+common species in the BCI tree dataset
+
+library(vegan)
+data(BCI)
+?BCI
+
+head(BCI)
+str(BCI)
+
+plot(BCI_xy)
+hist(BCI)
+
+
+#Species Abundance Distribution (SAD)
+SAD <- colSums(BCI)
+SAD
+
+hist(SAD)
+hist(log(SAD))
+abline(v=quantile(log(SAD)), col ='red')
+
+quantile(SAD)
+
+
+#' rare species = Tetrathylacium.johansenii because there are only 7 individuals
+#' common species = Trichilia.pallida because there are 1717 individuals
+
+
+plot(~ BCI$Tetrathylacium.johansenii, data = BCI_xy)
+
+
+plot(~ BCI$Trichilia.pallida, data = BCI_xy)
+
+SAD_dist <- dist(SAD)
+SAD_dist
+
+?subset
+?select
+
+rare_sp <- subset(BCI, select = Tetrathylacium.johansenii)
+rare_dist <- dist(rare_sp)
+rare_dist
+
+common_sp <- subset(BCI, select = Trichilia.pallida)
+common_dist <- dist(common_sp)
+common_dist
+
+RC_mantel <- mantel(rare_dist, common_dist)
+RC_mantel
+
+#' spatial dependence can be found in the common species, not so much the rare species
+#' becuase rare species tend to have more of a patchy/clustered distribution, meaning that 
+#' there are fewer sites for these species to occur and show similarities between areas.
+
+2. Build two generalized linear models to predict the abundance of 
+species Drypetes standleyi using the abundance of other tree species 
+in the study site. Specifically examine the follwoing species as 
+predictor variables:
+  
+other_species = c("Cordia.lasiocalyx", "Hirtella.triandra",
+             "Picramnia.latifolia", "Quassia.amara",
+             "Tabernaemontana.arborea", "Trattinnickia.aspera", 
+             "Xylopia.macrantha", "Drypetes.standleyi", data = BCI_xy)
+
+#' Model 1: only include a single species as a predictor variable
+
+sp_a <- BCI$"Cordia.lasiocalyx"
+sp_b <- BCI$"Hirtella.triandra"
+sp_c <- BCI$"Picramnia.latifolia"
+sp_d <- BCI$"Quassia.amara"
+sp_e <- BCI$"Tabernaemontana.arborea"
+sp_f <- BCI$"Trattinnickia.aspera"
+sp_g <- BCI$"Xylopia.macrantha"
+
+sp_ds <- BCI$"Drypetes.standleyi"
+
+species_1 <- gls(sp_ds ~ sp_b, data = BCI_xy)
+
+summary(species_1)
+
+
+sp_1_Var <- Variogram(species_1, form = ~ x +y)
+sp_1_Var
+
+plot(sp_1_Var)
+
+#' When looking at the Variogram, pattern seems linear - may be spatially dependent
+
+
+#' Model 2: include all of the species as predictor variables
+
+species_all <- gls("Drypetes.standleyi"~ sp_ids, data = BCI_xy)
+
+summary(species_all)
+vario_species_all <- Variogram(species_all, form = ~ x + y, resType = 'response')
+plot(vario_species_all)
+
+#' not sure what's happening with all the errors, but I feel like these
+#' are the right steps, but there's something wonky somewhere. But, i'd imagine that 
+#' when using all species spatial dependence would decrease, with model 2 having 
+#' a more accurate depiction
+
+
+  
+#' Did including the spatial error terms significantly improve model fit
+#' (use function anova to carry out model comparison)?
+
+anova(species_1, species_all)
+
+  
+
